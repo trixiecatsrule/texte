@@ -91,15 +91,14 @@
         {
             inText = this.input.Text;
 
-            bool areSame = false;
+            string areSame = "No";
 
             foreach (string ending in endings)
             {
-                if (compareEnding(inText, ending)) { areSame = true; }
+                if (compareEnding(inText, ending)) { areSame = ending; }
             }
 
-            if (areSame) { this.output.Text = "True"; }
-            else { this.output.Text = "False"; }
+            this.output.Text = areSame;
         }
 
         bool compareEnding(string inText, string toMatch)
