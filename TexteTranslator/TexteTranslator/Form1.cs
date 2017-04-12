@@ -21,10 +21,5 @@ namespace TexteTranslator
         {
             buttonClick();
         }
-
-        private void output_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
