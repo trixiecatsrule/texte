@@ -45,12 +45,14 @@ namespace TexteTranslator
             // 
             // output
             // 
+            this.output.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.output.Location = new System.Drawing.Point(12, 142);
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ReadOnly = true;
             this.output.Size = new System.Drawing.Size(260, 107);
             this.output.TabIndex = 1;
+            this.output.UseWaitCursor = true;
             // 
             // goButton
             // 
@@ -58,7 +60,7 @@ namespace TexteTranslator
             this.goButton.Name = "goButton";
             this.goButton.Size = new System.Drawing.Size(75, 23);
             this.goButton.TabIndex = 2;
-            this.goButton.Text = "Submit";
+            this.goButton.Text = "Translate";
             this.goButton.UseVisualStyleBackColor = true;
             this.goButton.Click += new System.EventHandler(this.goButton_Click);
             // 
@@ -67,6 +69,7 @@ namespace TexteTranslator
             this.AcceptButton = this.goButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.goButton);
             this.Controls.Add(this.output);
@@ -106,12 +109,13 @@ namespace TexteTranslator
         {
             inText = this.input.Text;
 
-            string outputString = "No match."; //This will only remain as "No match." if it is not reassigned (ie: if no endings match)
+            string outputString = inText; //This will only remain as the inputted text if it is not reassigned later (ie: if no endings match)
 
             foreach (string ending in endingMap.Keys) //loops through each possible textē ending in the endingMap and compares it to the actual ending.
             {
                 if (compareEnding(inText, ending)) {
-                    outputString = endingMap[ending]; //sets outputString equal to the phrase which represents the ending which was matched.
+                    outputString = inText.Substring(0, inText.Length - ending.Length) + " + " + endingMap[ending]; 
+                    //sets outputString equal to the part of the string not including the ending + the phrase which represents the ending which was matched.
                     break; //exits the foreach loop. If one ending matches, there's no point in checking all the others.
                 }
             }
