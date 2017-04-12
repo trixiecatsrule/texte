@@ -85,12 +85,25 @@
         public string inText;
 
         private string[] nouns = { "plūīr", "лājs", "зtē", "welantωon", "złāя", "øo", "plī" };
+        private string[] endings = { "o", "λ", "on", "ol", "ot"};
 
         void buttonClick()
         {
             inText = this.input.Text;
 
-            string toMatch = "en";
+            bool areSame = false;
+
+            foreach (string ending in endings)
+            {
+                if (compareEnding(inText, ending)) { areSame = true; }
+            }
+
+            if (areSame) { this.output.Text = "True"; }
+            else { this.output.Text = "False"; }
+        }
+
+        bool compareEnding(string inText, string toMatch)
+        {
             string[] toMatchLetters = toMatch.Split();
 
             string it = inText.Substring(inText.Length - toMatch.Length, toMatch.Length);
@@ -112,8 +125,7 @@
                 }
             }
 
-            if (areSame) { this.output.Text = "True"; }
-            else { this.output.Text = "False"; }
+            return areSame;
         }
     }
 }
