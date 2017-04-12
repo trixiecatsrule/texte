@@ -1,0 +1,11 @@
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.exe.config
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.exe
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.pdb
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.csprojResolveAssemblyReference.cache
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.Properties.Resources.resources
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.csproj.GenerateResource.Cache
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.exe
+c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.pdb
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.exe.config
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.exe
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.pdb
