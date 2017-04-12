@@ -9,3 +9,9 @@ c:\users\hazel\documents\visual studio 2015\Projects\TexteTranslator\TexteTransl
 C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.exe.config
 C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.exe
 C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.pdb
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.exe
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\bin\Debug\TexteTranslator.pdb
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.csprojResolveAssemblyReference.cache
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.Form1.resources
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.Properties.Resources.resources
+C:\Users\Hazel\Downloads\Texte\TexteTranslator\TexteTranslator\obj\Debug\TexteTranslator.csproj.GenerateResource.Cache

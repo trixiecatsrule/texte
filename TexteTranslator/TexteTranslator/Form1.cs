@@ -16,5 +16,15 @@ namespace TexteTranslator
         {
             InitializeComponent();
         }
+
+        private void goButton_Click(object sender, EventArgs e)
+        {
+            buttonClick();
+        }
+
+        private void output_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
