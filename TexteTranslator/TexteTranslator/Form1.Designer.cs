@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using static System.Collections.Generic.Dictionary<string, string>;
+using static System.Collections.Generic.Dictionary<string, int>;
 
 namespace TexteTranslator
 {
@@ -39,31 +39,38 @@ namespace TexteTranslator
             // 
             // input
             // 
+            this.input.Enabled = false;
+            this.input.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.input.Location = new System.Drawing.Point(12, 12);
             this.input.Multiline = true;
             this.input.Name = "input";
+            this.input.ReadOnly = true;
             this.input.Size = new System.Drawing.Size(260, 95);
             this.input.TabIndex = 0;
+            this.input.UseWaitCursor = true;
             // 
             // output
             // 
             this.output.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.output.Enabled = false;
+            this.output.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.output.Location = new System.Drawing.Point(12, 142);
             this.output.Multiline = true;
             this.output.Name = "output";
-            this.output.ReadOnly = true;
             this.output.Size = new System.Drawing.Size(260, 107);
             this.output.TabIndex = 1;
-            this.output.UseWaitCursor = true;
             // 
             // goButton
             // 
+            this.goButton.BackColor = System.Drawing.Color.DodgerBlue;
+            this.goButton.Font = new System.Drawing.Font("Arial", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.goButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.goButton.Location = new System.Drawing.Point(105, 113);
             this.goButton.Name = "goButton";
             this.goButton.Size = new System.Drawing.Size(75, 23);
             this.goButton.TabIndex = 2;
             this.goButton.Text = "Translate";
-            this.goButton.UseVisualStyleBackColor = true;
+            this.goButton.UseVisualStyleBackColor = false;
             this.goButton.Click += new System.EventHandler(this.goButton_Click);
             // 
             // Form1
@@ -78,6 +85,7 @@ namespace TexteTranslator
             this.Controls.Add(this.input);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -99,16 +107,39 @@ namespace TexteTranslator
             { "złāя", "manner" },
             { "øo", "small" },
             { "plī", "big" }
-        }; //some sample nouns to play with
+        }; //some sample words to play with
 
-        private Dictionary<string, string> sampleEndingMap = new Dictionary<string, string>() {
-            { "o", "Nominative" },
-            { "λ", "Accusative" },
-            { "on", "'s" },
-            { "ol", "Genitive" },
-            { "ot", "Locative" }
-        }; //providing "o" returns "nominative", etc.
+        private string[][] loadedWords;
+
+        private Dictionary<string, int> sampleEndingMap = new Dictionary<string, int>() {
+            { "o", 2 },
+            { "λ", 3 },
+            { "on", 4 },
+            { "ol", 5 },
+            { "īr", 6 }
+        }; //providing "o" returns " + nominative", etc.
         //   at a certain point, this will return english endings instead of phrases like "accusative".
+
+        private Dictionary<string, string> sampleCaseMap = new Dictionary<string, string>() {
+            { "o", "+Nominative" },
+            { "λ", "+Accusative" },
+            { "on", "+Possessive" },
+            { "ol", "+Genitive" },
+            { "īr", "+Locative" }
+        }; //A case map which will be used if the ending is recognized but the word isn't.
+
+        /**
+         * Runs when the form loads.
+         */
+        void start()
+        {
+            readFile("C:\\Users\\Hazel\\Downloads\\Texte\\TexteTranslator\\TexteTranslator\\Assets\\Dictionary.txt");
+            print2DArray(loadedWords);
+
+            //Only after the dictionary has loaded do we allow inputs.
+            input.ReadOnly = false;
+            input.Enabled = true;
+        }
 
         /**
          * Called when goButton is clicked or enter is pressed on the form.
@@ -117,19 +148,18 @@ namespace TexteTranslator
         {
             string inputText = this.input.Text;
 
-            string minusSuffix;
-            string suffix;
+            this.output.Text = ""; //Blank the output box.
 
-            extractWordAndSuffix(inputText, sampleWords, sampleEndingMap, out minusSuffix, out suffix);
-            //check to see if the inputted string includes one of the sample words/endings.
+            string[] inputWords = inputText.Split(' ');
 
-            if (suffix != "")
+            foreach(string inputWord in inputWords) //Process each word separately
             {
-                this.output.Text = minusSuffix + " + " + suffix;
-            }
-            else
-            {
-                this.output.Text = minusSuffix;
+                string word;
+
+                extractWordAndSuffix(inputWord, loadedWords, sampleEndingMap, sampleCaseMap, out word);
+                //check to see if the inputted string includes one of the sample words/endings.
+
+                this.output.Text += word + " "; //Introduce the space back in.
             }
 
             /*
@@ -149,44 +179,73 @@ namespace TexteTranslator
          * @param inText The string from which to derive the ending
          * @param words Potential words for the string
          * @param endingMap Potential endings for the string
+         * @param caseMap Used if the word isn't recognized but the case still is.
          * @param[out] word The rest of the phrase (possibly translated) without the suffix
          * @param[out] suffix The translated suffix. "" if no suffix was recognized.
          */
-        void extractWordAndSuffix(string inText, Dictionary<string, string> words, Dictionary<string, string> endingMap, out string word, out string suffix)
+        void extractWordAndSuffix(string inText, string[][] words, Dictionary<string, int> endingMap, Dictionary<string, string> caseMap, out string word)
         {
-            string ending = getEnding(inText, endingMap.Keys); //get the ending from the inputted text which is in the endingMap
+            string[] possibleWords = getWord(inText, words);
 
-            if (ending != "") //As long as an ending was matched...
+            if (possibleWords != null) //A word without a suffix was matched.
+            {
+                word = possibleWords[2]; //Default to the nominative case.
+                return; //There's no need to go further. The entire phrase was a translatable word.
+            }
+            
+            //If the return wasn't called, the input was a known word + a suffix, an unknown word + a suffix, or an unknown word.
+
+            string ending = getEnding(inText, endingMap.Keys); //Get the ending.
+
+            if (ending != "") //If an ending was matched...
             {
                 string withoutEnding = inText.Substring(0, inText.Length - ending.Length);
-                //sets withoutEnding equal to the part of the string not including the ending
+                //Sets withoutEnding equal to the part of the string w/o the suffix
 
-                withoutEnding = getWord(withoutEnding, words);
+                possibleWords = getWord(withoutEnding, words); //See if the input, w/o the suffix, is a word.
 
-                word = withoutEnding;
-                suffix = endingMap[ending];
+                int suffixNumber = endingMap[ending];
 
-                //return withoutEnding + " + " + endingMap[ending];
-                //returns a string equal withoutEnding + the phrase which represents the ending which was matched.
+                if (possibleWords != null) //If a word and a suffix was matched, return that word conjugated correctly.
+                {
+                    word = possibleWords[suffixNumber];
+                    return;
+                }
+                else //No word was matched, but a suffix was. 
+                     //[IN A RECURSIVE FUNCTION, THIS IS *THE ONLY* CASE WHICH SHOULD LOOP]
+                {
+                    word = withoutEnding + caseMap[ending];
+                    return;
+                }
             }
-            else //There's no ending.
-            {
-                word = getWord(inText, words);
-                suffix = "";
-                //return getWord(inText, words);
-                /* There are two possible cases here:
-                 * 1) The inputted text was a word without an ending. In this case, getWord returns the word, translated.
-                 * 2) Nothing can be translated. In this case, getWord returns the untranslated inputted text.
-                 * Regardless, getWord returns the correct translation.
-                 */
-            }
+            
+            //If we get here, no ending was matched and the input is not just a word.
+            //So the only thing it can be is an unknown word.
+            word = inText; //Nothing could be translated :(
+            return;
         }
 
         /**
          * If the inputted word is one of those in the dictionary, returns the word. Else, returns the inputted word.
          * @param inText The word to check against the dictionary
-         * @param words The dictionary of words
-         * @returns The word, translated, if possible. Else, the inputted word.
+         * @param words The dictionary of words (2D array)
+         * @returns An array of possible conjugations, or null.
+         */
+        string[] getWord(string inText, string[][] words)
+        {
+            for (int i = 0; i < words.Length; i++) //For every row
+            {
+                string compareWord = words[i][0]; //If the word exists, the untranslated version is in the first column.
+                if (inText == compareWord)
+                {
+                    return words[i];
+                }
+            }
+            return null;
+        }
+
+        /**
+         * An overloaded version of getWord for dictionaries.
          */
         string getWord(string inText, Dictionary<string, string> words)
         {
@@ -255,6 +314,46 @@ namespace TexteTranslator
             }
 
             return areSame;
+        }
+
+        /**
+         * Reads from a file and formats it to an array.
+         * @param filePath Where the file is stored. Should start "C:\\", etc.
+         */
+        void readFile(string filePath)
+        {
+            string[] lines = System.IO.File.ReadAllLines(@filePath); //reads the file into an array which now contains each line
+
+            loadedWords = new string[lines.Length][]; //Initializes loadedWords with the right number of lines
+
+            for (int i = 0; i < lines.Length; i++) //For every line...
+            {
+                loadedWords[i] = new string[7];
+                //Initializes the array with as many rows as needed and 7 columns: the textē word, part of speech, and five cases
+                string line = lines[i];
+                string[] segments = line.Split('.');
+                for (int j = 0; j < segments.Length; j++) //...split it by its spacer and map it to an array.
+                {
+                    string segment = segments[j];
+                    loadedWords[i][j] = segment;
+                }
+            }
+        }
+
+        /**
+         * Prints the given 2D array to the console.
+         */
+        void print2DArray(string[][] inputArray)
+        {
+            for (int i = 0; i < inputArray.Length; i++) //For every row
+            {
+                Debug.WriteLine(""); //Start with a new line.
+
+                for (int j = 0; j < inputArray[i].Length; j++) //And every column within that row (ie: every element)
+                {
+                    Debug.Write(inputArray[i][j] + " "); //Write every element, separated by a white space.
+                }
+            }
         }
     }
 }
