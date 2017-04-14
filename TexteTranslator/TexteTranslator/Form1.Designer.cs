@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Collections.Generic.Dictionary<string, int>;
 
@@ -42,7 +43,7 @@ namespace TexteTranslator
             // input
             // 
             this.input.Enabled = false;
-            this.input.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.input.Font = new System.Drawing.Font("Arial", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.input.Location = new System.Drawing.Point(12, 12);
             this.input.Multiline = true;
             this.input.Name = "input";
@@ -55,7 +56,7 @@ namespace TexteTranslator
             // 
             this.output.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.output.Enabled = false;
-            this.output.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output.Font = new System.Drawing.Font("Arial", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.output.Location = new System.Drawing.Point(12, 142);
             this.output.Multiline = true;
             this.output.Name = "output";
@@ -181,6 +182,27 @@ namespace TexteTranslator
 
             foreach(string inputWord in inputWords) //Process each word separately
             {
+                ArrayList possibleWords = getPossibleWords(inputText, loadedWords);
+
+                foreach (string possibleWord in possibleWords)
+                {
+                    string[] texteWords = getWord(possibleWord, loadedWords); //A list of the row of the dictionary containing that word.
+
+                    this.output.Text += "[";
+
+                    for(int i = 2; i < texteWords.Length; i++)
+                    {
+                        this.output.Text += texteWords[i] + " ";
+                    }
+
+                    this.output.Text = this.output.Text.Substring(0, this.output.Text.Length-1) + "]";
+                }
+            }
+
+            this.output.Text += "\r\n\r\n";
+
+            foreach (string inputWord in inputWords)
+            {
                 string word;
 
                 extractWordAndSuffix(inputWord, loadedWords, sampleEndingMap, sampleCaseMap, out word);
@@ -199,6 +221,39 @@ namespace TexteTranslator
              * 
              * (A prefix function is currently a WIP.) 
              */
+        }
+
+        /**
+         * Takes a string and a set of words to match and returns any word matches.
+         * @param inText The text from which to extract words
+         * @param words The words to potentially match
+         * @return A list of the words which were matched
+         */
+         ArrayList getPossibleWords(string inText, string[][] dictionary)
+        {
+            ArrayList matches = new ArrayList();
+
+            for (int i = 0; i < inText.Length; i++) //loops and checks all possible subdivisions of the word with the dictionary
+            {
+                string checkString = inText.Substring(i, inText.Length - i); //truncates progressively larger numbers of letters off end of checkString
+                int repeat = checkString.Length;
+
+                for (int n = 0; n < repeat; n++)
+                {
+                    for (int j = 0; j < dictionary.Length; j++)
+                    {
+                        string vocabWord = dictionary[j][0];
+                        if (checkString == vocabWord)
+                        {
+                            matches.Add(vocabWord);
+                        }
+                    }
+
+                    checkString = checkString.Substring(0, checkString.Length - 1);
+                }
+            }
+
+            return matches;
         }
 
         /**
