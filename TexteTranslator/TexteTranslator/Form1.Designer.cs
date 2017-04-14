@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using static System.Collections.Generic.Dictionary<string, string>;
 
 namespace TexteTranslator
 {
@@ -93,7 +94,7 @@ namespace TexteTranslator
 
         private string[] nouns = { "plūīr", "лājs", "зtē", "welantωon", "złāя", "øo", "plī" }; //some sample nouns to play with
 
-        private Dictionary<string, string> endingMap = new Dictionary<string, string>() {
+        private Dictionary<string, string> sampleEndingMap = new Dictionary<string, string>() {
             { "o", "Nominative" },
             { "λ", "Accusative" },
             { "on", "Possessive" },
@@ -103,24 +104,46 @@ namespace TexteTranslator
         //   at a certain point, this will return english endings instead of phrases like "accusative".
 
         /**
-         * Called when goButton is clicked.
+         * Called when goButton is clicked or enter is pressed on the form.
          */
         void buttonClick()
         {
             inText = this.input.Text;
 
-            string outputString = inText; //This will only remain as the inputted text if it is not reassigned later (ie: if no endings match)
+            string ending = getEnding(inText, sampleEndingMap.Keys); //get the ending from the inputted text which is in the sampleEndingMap
 
-            foreach (string ending in endingMap.Keys) //loops through each possible textē ending in the endingMap and compares it to the actual ending.
+            if (ending != "") //as long as an ending was matched.
             {
-                if (compareEnding(inText, ending)) {
-                    outputString = inText.Substring(0, inText.Length - ending.Length) + " + " + endingMap[ending]; 
-                    //sets outputString equal to the part of the string not including the ending + the phrase which represents the ending which was matched.
+                this.output.Text = inText.Substring(0, inText.Length - ending.Length) + " + " + sampleEndingMap[ending];
+                //sets output's text equal to the part of the string not including the ending + the phrase which represents the ending which was matched.
+            }
+            else
+            {
+                this.output.Text = inText; //nothing could be translated :(
+            }
+        }
+
+        /**
+         * Returns the ending from the dictionary keys which ends the given string.
+         * @param inText The text from which to extract the ending.
+         * @param endingMap The dictionary of ending and their maps.
+         * @returns The ending from the dictionary's keys which matched the inText ending, or "" if there was no match.
+         */
+        string getEnding(string inText, KeyCollection endingList)
+        {
+            string outputString = ""; //This will only remain as "" if it is not reassigned later (ie: if no endings match)
+
+            foreach (string ending in endingList) //loops through each possible textē ending in the endingList and compares it to the actual ending.
+            {
+                if (compareEnding(inText, ending))
+                {
+                    outputString = ending;
+                    //sets outputString equal to the ending which was matched.
                     break; //exits the foreach loop. If one ending matches, there's no point in checking all the others.
                 }
             }
 
-            this.output.Text = outputString;
+            return outputString;
         }
 
         /**
