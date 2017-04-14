@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using static System.Collections.Generic.Dictionary<string, string>;
 
 namespace TexteTranslator
@@ -90,9 +91,7 @@ namespace TexteTranslator
         private System.Windows.Forms.TextBox output;
         private System.Windows.Forms.Button goButton;
 
-        public string inText; //the inputted text
-
-        private Dictionary<string, string> words = new Dictionary<string, string>() {
+        private Dictionary<string, string> sampleWords = new Dictionary<string, string>() {
             { "plūīr", "tree" },
             { "лājs", "house" },
             { "зtē", "symbol" },
@@ -105,7 +104,7 @@ namespace TexteTranslator
         private Dictionary<string, string> sampleEndingMap = new Dictionary<string, string>() {
             { "o", "Nominative" },
             { "λ", "Accusative" },
-            { "on", "Possessive" },
+            { "on", "'s" },
             { "ol", "Genitive" },
             { "ot", "Locative" }
         }; //providing "o" returns "nominative", etc.
@@ -116,30 +115,90 @@ namespace TexteTranslator
          */
         void buttonClick()
         {
-            inText = this.input.Text;
+            string inputText = this.input.Text;
 
-            string ending = getEnding(inText, sampleEndingMap.Keys); //get the ending from the inputted text which is in the sampleEndingMap
+            string minusSuffix;
+            string suffix;
 
-            if (ending != "") //as long as an ending was matched.
+            extractWordAndSuffix(inputText, sampleWords, sampleEndingMap, out minusSuffix, out suffix);
+            //check to see if the inputted string includes one of the sample words/endings.
+
+            if (suffix != "")
+            {
+                this.output.Text = minusSuffix + " + " + suffix;
+            }
+            else
+            {
+                this.output.Text = minusSuffix;
+            }
+
+            /*
+             * This algorithm is super recursive!
+             * While (suffix != "")
+             *     Extract a suffix and the remainder string
+             *     Add the extracted suffix to the front of a return string
+             * Check to see if the remainder string is a word, if it is, add it to the front of the return string
+             * Return the return string.
+             * 
+             * (A prefix function is currently a WIP.) 
+             */
+        }
+
+        /**
+         * Takes an inputted text, a set of potential words, and a set of potential endings, and returns the found word plus the found ending.
+         * @param inText The string from which to derive the ending
+         * @param words Potential words for the string
+         * @param endingMap Potential endings for the string
+         * @param[out] word The rest of the phrase (possibly translated) without the suffix
+         * @param[out] suffix The translated suffix. "" if no suffix was recognized.
+         */
+        void extractWordAndSuffix(string inText, Dictionary<string, string> words, Dictionary<string, string> endingMap, out string word, out string suffix)
+        {
+            string ending = getEnding(inText, endingMap.Keys); //get the ending from the inputted text which is in the endingMap
+
+            if (ending != "") //As long as an ending was matched...
             {
                 string withoutEnding = inText.Substring(0, inText.Length - ending.Length);
                 //sets withoutEnding equal to the part of the string not including the ending
 
-                foreach (string word in words.Keys)
-                {
-                    if (withoutEnding == word) //if the remaining word, without the ending, is one of the words in the dictionary...
-                    {
-                        withoutEnding = words[word]; //...translate it to english
-                        break;
-                    }
-                }
+                withoutEnding = getWord(withoutEnding, words);
 
-                this.output.Text = withoutEnding + " + " + sampleEndingMap[ending];
-                //sets output's text equal withoutEnding + the phrase which represents the ending which was matched.
+                word = withoutEnding;
+                suffix = endingMap[ending];
+
+                //return withoutEnding + " + " + endingMap[ending];
+                //returns a string equal withoutEnding + the phrase which represents the ending which was matched.
+            }
+            else //There's no ending.
+            {
+                word = getWord(inText, words);
+                suffix = "";
+                //return getWord(inText, words);
+                /* There are two possible cases here:
+                 * 1) The inputted text was a word without an ending. In this case, getWord returns the word, translated.
+                 * 2) Nothing can be translated. In this case, getWord returns the untranslated inputted text.
+                 * Regardless, getWord returns the correct translation.
+                 */
+            }
+        }
+
+        /**
+         * If the inputted word is one of those in the dictionary, returns the word. Else, returns the inputted word.
+         * @param inText The word to check against the dictionary
+         * @param words The dictionary of words
+         * @returns The word, translated, if possible. Else, the inputted word.
+         */
+        string getWord(string inText, Dictionary<string, string> words)
+        {
+            string word;
+
+            if (words.TryGetValue(inText, out word))
+            {
+                return word;
             }
             else
             {
-                this.output.Text = inText; //nothing could be translated :(
+                return inText;
             }
         }
 
