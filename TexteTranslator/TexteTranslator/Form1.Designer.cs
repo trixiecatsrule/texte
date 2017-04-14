@@ -180,26 +180,25 @@ namespace TexteTranslator
 
             string[] inputWords = inputText.Split(' ');
 
+            //DYLAN
+
             foreach(string inputWord in inputWords) //Process each word separately
             {
                 ArrayList possibleWords = getPossibleWords(inputText, loadedWords);
 
+                this.output.Text += "[";
+
                 foreach (string possibleWord in possibleWords)
                 {
-                    string[] texteWords = getWord(possibleWord, loadedWords); //A list of the row of the dictionary containing that word.
-
-                    this.output.Text += "[";
-
-                    for(int i = 2; i < texteWords.Length; i++)
-                    {
-                        this.output.Text += texteWords[i] + " ";
-                    }
-
-                    this.output.Text = this.output.Text.Substring(0, this.output.Text.Length-1) + "]";
+                    this.output.Text += possibleWord + " ";
                 }
+
+                this.output.Text = this.output.Text.Substring(0, this.output.Text.Length - 1) + "]";
             }
 
             this.output.Text += "\r\n\r\n";
+
+            //HAZEL
 
             foreach (string inputWord in inputWords)
             {
