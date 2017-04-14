@@ -92,7 +92,15 @@ namespace TexteTranslator
 
         public string inText; //the inputted text
 
-        private string[] nouns = { "plūīr", "лājs", "зtē", "welantωon", "złāя", "øo", "plī" }; //some sample nouns to play with
+        private Dictionary<string, string> words = new Dictionary<string, string>() {
+            { "plūīr", "tree" },
+            { "лājs", "house" },
+            { "зtē", "symbol" },
+            { "welantωon", "truck" },
+            { "złāя", "manner" },
+            { "øo", "small" },
+            { "plī", "big" }
+        }; //some sample nouns to play with
 
         private Dictionary<string, string> sampleEndingMap = new Dictionary<string, string>() {
             { "o", "Nominative" },
@@ -114,8 +122,20 @@ namespace TexteTranslator
 
             if (ending != "") //as long as an ending was matched.
             {
-                this.output.Text = inText.Substring(0, inText.Length - ending.Length) + " + " + sampleEndingMap[ending];
-                //sets output's text equal to the part of the string not including the ending + the phrase which represents the ending which was matched.
+                string withoutEnding = inText.Substring(0, inText.Length - ending.Length);
+                //sets withoutEnding equal to the part of the string not including the ending
+
+                foreach (string word in words.Keys)
+                {
+                    if (withoutEnding == word) //if the remaining word, without the ending, is one of the words in the dictionary...
+                    {
+                        withoutEnding = words[word]; //...translate it to english
+                        break;
+                    }
+                }
+
+                this.output.Text = withoutEnding + " + " + sampleEndingMap[ending];
+                //sets output's text equal withoutEnding + the phrase which represents the ending which was matched.
             }
             else
             {
