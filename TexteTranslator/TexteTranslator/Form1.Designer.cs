@@ -35,6 +35,8 @@ namespace TexteTranslator
             this.input = new System.Windows.Forms.TextBox();
             this.output = new System.Windows.Forms.TextBox();
             this.goButton = new System.Windows.Forms.Button();
+            this.loadButton = new System.Windows.Forms.Button();
+            this.loadInput = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // input
@@ -73,13 +75,34 @@ namespace TexteTranslator
             this.goButton.UseVisualStyleBackColor = false;
             this.goButton.Click += new System.EventHandler(this.goButton_Click);
             // 
+            // loadButton
+            // 
+            this.loadButton.Location = new System.Drawing.Point(197, 258);
+            this.loadButton.Name = "loadButton";
+            this.loadButton.Size = new System.Drawing.Size(75, 20);
+            this.loadButton.TabIndex = 3;
+            this.loadButton.Text = "Load";
+            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // loadInput
+            // 
+            this.loadInput.Location = new System.Drawing.Point(12, 258);
+            this.loadInput.Name = "loadInput";
+            this.loadInput.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.loadInput.Size = new System.Drawing.Size(179, 20);
+            this.loadInput.TabIndex = 4;
+            this.loadInput.Text = "Dictionary.txt";
+            // 
             // Form1
             // 
             this.AcceptButton = this.goButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(284, 294);
+            this.Controls.Add(this.loadInput);
+            this.Controls.Add(this.loadButton);
             this.Controls.Add(this.goButton);
             this.Controls.Add(this.output);
             this.Controls.Add(this.input);
@@ -116,7 +139,7 @@ namespace TexteTranslator
             { "λ", 3 },
             { "on", 4 },
             { "ol", 5 },
-            { "īr", 6 }
+            { "ot", 6 }
         }; //providing "o" returns " + nominative", etc.
         //   at a certain point, this will return english endings instead of phrases like "accusative".
 
@@ -125,15 +148,19 @@ namespace TexteTranslator
             { "λ", "+Accusative" },
             { "on", "+Possessive" },
             { "ol", "+Genitive" },
-            { "īr", "+Locative" }
+            { "ot", "+Locative" }
         }; //A case map which will be used if the ending is recognized but the word isn't.
 
         /**
-         * Runs when the form loads.
+         * Runs when the form loads or when the load button is clicked.
          */
-        void start()
+        void loadDictionary()
         {
-            readFile("C:\\Users\\Hazel\\Downloads\\Texte\\TexteTranslator\\TexteTranslator\\Assets\\Dictionary.txt");
+            input.ReadOnly = true;
+            input.Enabled = false;
+
+            //readFile("C:\\Users\\Hazel\\Downloads\\Texte\\TexteTranslator\\TexteTranslator\\Assets\\Dictionary.txt");
+            readFile("..\\..\\Assets\\" + this.loadInput.Text);
             print2DArray(loadedWords);
 
             //Only after the dictionary has loaded do we allow inputs.
@@ -355,6 +382,9 @@ namespace TexteTranslator
                 }
             }
         }
+
+        private System.Windows.Forms.Button loadButton;
+        private System.Windows.Forms.TextBox loadInput;
     }
 }
 
