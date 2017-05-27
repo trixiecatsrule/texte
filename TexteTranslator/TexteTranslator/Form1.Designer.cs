@@ -133,14 +133,14 @@ namespace TexteTranslator
             { "plī", "big" }
         }; //some sample words to play with
 
-        private string[][] loadedWords;
+        private DictionaryEntry[] loadedWords;
 
         private Dictionary<string, int> sampleEndingMap = new Dictionary<string, int>() {
-            { "o", 2 },
-            { "λ", 3 },
-            { "on", 4 },
-            { "ol", 5 },
-            { "ot", 6 }
+            { "o", 0 },
+            { "λ", 1 },
+            { "on", 2 },
+            { "ol", 3 },
+            { "ot", 4 }
         }; //providing "o" returns " + nominative", etc.
         //   at a certain point, this will return english endings instead of phrases like "accusative".
 
@@ -184,16 +184,16 @@ namespace TexteTranslator
 
             foreach(string inputWord in inputWords) //Process each word separately
             {
-                ArrayList possibleWords = getPossibleWords(inputText, loadedWords);
+                ArrayList possibleWords = getPossibleWords(inputWord, loadedWords);
 
                 this.output.Text += "[";
 
                 foreach (string possibleWord in possibleWords)
                 {
-                    this.output.Text += possibleWord + " ";
+                    this.output.Text += " " + possibleWord;
                 }
 
-                this.output.Text = this.output.Text.Substring(0, this.output.Text.Length - 1) + "]";
+                this.output.Text += " ]";
             }
 
             this.output.Text += "\r\n\r\n";
@@ -223,32 +223,47 @@ namespace TexteTranslator
         }
 
         /**
-         * Takes a string and a set of words to match and returns any word matches.
+         * Takes a complete word and a possible base word, and returns two strings, removing the base word to get the two sides.
+         * @param completeWord The word in its entirety
+         * @param baseWord The word to be removed
+         * @param[out] prefixString The first half of completeWord, with baseWord removed
+         * @param[out] suffixString The second half
+         */
+         void getSuffixAndPrefixStrings(string completeWord, string baseWord, out string prefixString, out string suffixString)
+        {
+            prefixString = "";
+            suffixString = "";
+        }
+
+        /**
+         * Takes a string in textē and a set of words to match and returns any word matches in textē.
          * @param inText The text from which to extract words
          * @param words The words to potentially match
          * @return A list of the words which were matched
          */
-         ArrayList getPossibleWords(string inText, string[][] dictionary)
+        ArrayList getPossibleWords(string inText, DictionaryEntry[] dictionary)
         {
             ArrayList matches = new ArrayList();
 
             for (int i = 0; i < inText.Length; i++) //loops and checks all possible subdivisions of the word with the dictionary
             {
-                string checkString = inText.Substring(i, inText.Length - i); //truncates progressively larger numbers of letters off end of checkString
+                string checkString = inText.Substring(i); 
+                //truncates progressively larger numbers of letters off end of checkString - removes a letter from the front
                 int repeat = checkString.Length;
 
                 for (int n = 0; n < repeat; n++)
                 {
                     for (int j = 0; j < dictionary.Length; j++)
                     {
-                        string vocabWord = dictionary[j][0];
+                        string vocabWord = dictionary[j].getBase();
+                        Debug.WriteLine(checkString);
                         if (checkString == vocabWord)
                         {
                             matches.Add(vocabWord);
                         }
                     }
 
-                    checkString = checkString.Substring(0, checkString.Length - 1);
+                    checkString = checkString.Substring(0, checkString.Length - 1); //removes a letter from the back
                 }
             }
 
@@ -264,13 +279,13 @@ namespace TexteTranslator
          * @param[out] word The rest of the phrase (possibly translated) without the suffix
          * @param[out] suffix The translated suffix. "" if no suffix was recognized.
          */
-        void extractWordAndSuffix(string inText, string[][] words, Dictionary<string, int> endingMap, Dictionary<string, string> caseMap, out string word)
+        void extractWordAndSuffix(string inText, DictionaryEntry[] words, Dictionary<string, int> endingMap, Dictionary<string, string> caseMap, out string word)
         {
-            string[] possibleWords = getWord(inText, words);
+            DictionaryEntry possibleWords = getWord(inText, words);
 
             if (possibleWords != null) //A word without a suffix was matched.
             {
-                word = possibleWords[2]; //Default to the nominative case.
+                word = possibleWords.getConjugation(0); //Default to the nominative case.
                 return; //There's no need to go further. The entire phrase was a translatable word.
             }
             
@@ -289,7 +304,7 @@ namespace TexteTranslator
 
                 if (possibleWords != null) //If a word and a suffix was matched, return that word conjugated correctly.
                 {
-                    word = possibleWords[suffixNumber];
+                    word = possibleWords.getConjugation(suffixNumber);
                     return;
                 }
                 else //No word was matched, but a suffix was. 
@@ -312,11 +327,11 @@ namespace TexteTranslator
          * @param words The dictionary of words (2D array)
          * @returns An array of possible conjugations, or null.
          */
-        string[] getWord(string inText, string[][] words)
+        DictionaryEntry getWord(string inText, DictionaryEntry[] words)
         {
             for (int i = 0; i < words.Length; i++) //For every row
             {
-                string compareWord = words[i][0]; //If the word exists, the untranslated version is in the first column.
+                string compareWord = words[i].getBase(); //If the word exists, the untranslated version is the base.
                 if (inText == compareWord)
                 {
                     return words[i];
@@ -326,7 +341,7 @@ namespace TexteTranslator
         }
 
         /**
-         * An overloaded version of getWord for dictionaries.
+         * An overloaded version of getWord for dictionaries. OUT OF DATE
          */
         string getWord(string inText, Dictionary<string, string> words)
         {
@@ -405,35 +420,25 @@ namespace TexteTranslator
         {
             string[] lines = System.IO.File.ReadAllLines(@filePath); //reads the file into an array which now contains each line
 
-            loadedWords = new string[lines.Length][]; //Initializes loadedWords with the right number of lines
+            loadedWords = new DictionaryEntry[lines.Length]; //Initializes loadedWords with the right number of lines
 
             for (int i = 0; i < lines.Length; i++) //For every line...
             {
-                loadedWords[i] = new string[7];
                 //Initializes the array with as many rows as needed and 7 columns: the textē word, part of speech, and five cases
                 string line = lines[i];
                 string[] segments = line.Split('.');
-                for (int j = 0; j < segments.Length; j++) //...split it by its spacer and map it to an array.
-                {
-                    string segment = segments[j];
-                    loadedWords[i][j] = segment;
-                }
+                loadedWords[i] = new DictionaryEntry(segments);
             }
         }
 
         /**
          * Prints the given 2D array to the console.
          */
-        void print2DArray(string[][] inputArray)
+        void print2DArray(DictionaryEntry[] inputArray)
         {
             for (int i = 0; i < inputArray.Length; i++) //For every row
             {
-                Debug.WriteLine(""); //Start with a new line.
-
-                for (int j = 0; j < inputArray[i].Length; j++) //And every column within that row (ie: every element)
-                {
-                    Debug.Write(inputArray[i][j] + " "); //Write every element, separated by a white space.
-                }
+                Debug.WriteLine(inputArray[i].ToString());
             }
         }
 
