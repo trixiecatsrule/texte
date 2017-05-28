@@ -178,48 +178,54 @@ namespace TexteTranslator
 
             this.output.Text = ""; //Blank the output box.
 
-            string[] inputWords = inputText.Split(' ');
-
-            //DYLAN
-
-            foreach(string inputWord in inputWords) //Process each word separately
+            if (inputText != "")
             {
-                ArrayList possibleWords = getPossibleWords(inputWord, loadedWords);
+                string[] inputWords = inputText.Split(' ');
 
-                this.output.Text += "[";
+                //DYLAN
 
-                foreach (string possibleWord in possibleWords)
+                foreach (string inputWord in inputWords) //For each word
                 {
-                    this.output.Text += " " + possibleWord;
+                    ArrayList possibleWords = getPossibleWords(inputWord, loadedWords);
+
+                    this.output.Text += "[";
+
+                    foreach (string possibleWord in possibleWords) //For each possible base word
+                    {
+                        string prefixString;
+                        string suffixString;
+                        getPrefixAndSuffixStrings(inputWord, possibleWord, out prefixString, out suffixString);
+                        this.output.Text += " " + prefixString + ":" + possibleWord + ":" + suffixString;
+                    }
+
+                    this.output.Text += " ]";
                 }
 
-                this.output.Text += " ]";
+                this.output.Text += "\r\n\r\n";
+
+                //HAZEL
+
+                foreach (string inputWord in inputWords)
+                {
+                    string word;
+
+                    extractWordAndSuffix(inputWord, loadedWords, sampleEndingMap, sampleCaseMap, out word);
+                    //check to see if the inputted string includes one of the sample words/endings.
+
+                    this.output.Text += word + " "; //Introduce the space back in.
+                }
+
+                /*
+                 * This algorithm is super recursive!
+                 * While (suffix != "")
+                 *     Extract a suffix and the remainder string
+                 *     Add the extracted suffix to the front of a return string
+                 * Check to see if the remainder string is a word, if it is, add it to the front of the return string
+                 * Return the return string.
+                 * 
+                 * (A prefix function is currently a WIP.) 
+                 */
             }
-
-            this.output.Text += "\r\n\r\n";
-
-            //HAZEL
-
-            foreach (string inputWord in inputWords)
-            {
-                string word;
-
-                extractWordAndSuffix(inputWord, loadedWords, sampleEndingMap, sampleCaseMap, out word);
-                //check to see if the inputted string includes one of the sample words/endings.
-
-                this.output.Text += word + " "; //Introduce the space back in.
-            }
-
-            /*
-             * This algorithm is super recursive!
-             * While (suffix != "")
-             *     Extract a suffix and the remainder string
-             *     Add the extracted suffix to the front of a return string
-             * Check to see if the remainder string is a word, if it is, add it to the front of the return string
-             * Return the return string.
-             * 
-             * (A prefix function is currently a WIP.) 
-             */
         }
 
         /**
@@ -229,10 +235,12 @@ namespace TexteTranslator
          * @param[out] prefixString The first half of completeWord, with baseWord removed
          * @param[out] suffixString The second half
          */
-         void getSuffixAndPrefixStrings(string completeWord, string baseWord, out string prefixString, out string suffixString)
+         void getPrefixAndSuffixStrings(string completeWord, string baseWord, out string prefixString, out string suffixString)
         {
-            prefixString = "";
-            suffixString = "";
+            int baseLoc = completeWord.IndexOf(baseWord);
+
+            prefixString = completeWord.Substring(0, baseLoc); //From position 0, of length baseLoc = everything before baseLoc
+            suffixString = completeWord.Substring(baseLoc + baseWord.Length); //From the end of baseWord, until the end of the string
         }
 
         /**
@@ -256,7 +264,6 @@ namespace TexteTranslator
                     for (int j = 0; j < dictionary.Length; j++)
                     {
                         string vocabWord = dictionary[j].getBase();
-                        Debug.WriteLine(checkString);
                         if (checkString == vocabWord)
                         {
                             matches.Add(vocabWord);
