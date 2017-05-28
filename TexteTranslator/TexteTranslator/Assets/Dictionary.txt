@@ -1,8 +1,108 @@
-﻿nem.pn.I.me.my.I.I
-plūīr.n.tree.tree.tree's.tree.tree
-лājs.n.house.house.house's.house.house
-зtē.n.symbol.symbol.symbol's.symbol.symbol
-welantωon.n.truck.truck.truck's.truck.truck
-złāя.n.manner.manner.manner's.manner.manner
-øo.adj.small.small.small.small.small
-plī.adj.big.big.big.big.big
+﻿atxē.pn.you.you.your.with
+femisq.pn.we.us.our.with
+femī.pn.we.us.our.with
+mdiu.pn.here.here.of here.at
+nem.pn.I.me.my.with
+xāячи.pn.they.them.their.with
+xkālek.pn.they.them.their.with
+ti.pn.it.it.its.with
+ūweψ.pn.they.them.their.with
+wcиø.pn.they.them.their.with
+ψāto.pn.you.you.your.with
+
+ānkxālω.pr.under.under.from under.//.//
+āzūц.pr.//.//.//.long after.//
+ωзt.pr.behind.behind.//.after.//
+эз.pr.//.//.//.until.//
+elmiklīs.pr.throughout.//.//.//.//
+λxīk.pr.in front of.in front of.away from.before.//
+fω.pr.outside of.outside.into.//.//
+grā.pr.//.//.//.since.//
+gπψ.pr.across.//.//.//.//
+hēūчlж.pr.through.//.//.through.//
+cжāл.pr.among.between.//.between.among
+cmīπg.pr.against.against.off of.sequentially with.against
+izīk.pr.above.above.//.//.//
+kilē.pr.under.//.//.//.//
+køūц.pr.near.near.away from.around.concerning
+ūrn.pr.//.//.//.ago.//
+яωes.pr.far from.//.far from.long before.//
+łitst.pr.on.onto.off of.//.//
+łīиzē.pr.inside.into.out from.//.//
+łoeks.pr.//.toward.away from.//.//
+
+dām.cconj.instead of
+el.cconj.AKA
+ēūs.cconj.or
+fπn.cconj.nor
+лo.cconj.and/or
+kit.cconj.and
+
+aлūц.sconj.subj.//.therefore
+fār.sconj.cond.despite that.//
+жc.sconj.subj.if.then
+лēиā.sconj.subj.as long as
+kчи.sconj.cond.because.//
+sūm.sconj.subj.once.//
+xcs.sconj.subj.although.nevertheless
+to.sconj.cond.//.before
+
+eиoka.part.no
+ka.part.yes
+
+anāwru.adj.powered
+asωtaл.adj.evil
+āmāzksēāt.adj.the one and only
+ānk.adj.new
+ārāwи.adj.insane
+ārūиfū.adj.geometric
+ωojikē.adj.forbidden
+dłøяūw.adj.poor
+eиoāwru.adj.broken
+цзиωeиrī.adj.unexpected
+xlidλflap.adj.risky
+tøwī.adj.stupid
+πиīэās.adj.precarious
+πgψem.adj.hot
+πлoи.adj.lone
+
+яāwłāиz.v3.i.emerge.emerges.emerged.emerged.emerging.disappear.disappears.disappeared.disappeared.disappearing.reappear.reappears.reappeared.reappeared.reappearing
+āmaи..v1.t.shoot.shoots.shot.shot.shooting
+rгem.v2.t.curse.curses.cursed.cursed.cursing.exorcise.exorcises.exorcised.exorcised.exorcising
+exānmeīи.v1.t.cuddle.cuddles.cuddled.cuddled.cuddling
+dчи.v2.dt/t.do.does.did.done.doing.undo.undoes.undid.undone.undoing
+āspāw.v3.t.draw.draws.drew.drawn.drawing.erase.erases.erased.erased.erasing.redraw.redraws.redrew.redrawn.redrawing
+mātłikēψ.v3.t.create.creates.created.created.creating.destroy.destroys.destroyed.destroyed.destroying.recreate.recreates.recreated.recreated.recreating
+āψiw.v3.df/t.seize.seizes.seized.seized.seizing.return.returns.returned.returned.returning.retake.retakes.retook.retaken.retaking
+fłejāц.v1.i.stay.stays.stayed.stayed.staying
+wøoи.v1.i.fly.flies.flew.flown.flying
+weskālēt.v2.i.sleep.sleeps.sleeped.sleeped.sleeping.wake.wakes.woke.awakened.waking
+
+dłøяиwnaklчи.n.mass.ir.foolishness.foolishness'
+āvākās.n.count.ir.samurai.samurai's.samurai.samurai's
+ānawreftīиānωāktē.n.count.s.motorcycle
+angārēsu.n.count.s.avenger
+āłinwīrtak.n.count.ir.anomaly.anomalies.anomaly's.anomalies'
+эψākāts.n.count.s.evil spirit
+aиīrāk.n.count.s.sword
+adgokdowek.n.count.s.warehouse
+aиsūsūā.n.count.s.nerd
+angoniq.n.count.s.America
+akstēgoniq.n.count.s.island
+ākstēwesgωmātēs.n.count.s.province
+āntulīr.n.mass.s.conflict
+esø.n.count.s.law
+sākūdodonoиxī.n.count.s.dog
+vādujixto.n.count.s.cat
+jixto.n.count.s.cat
+jītāиu.n.count.ir.mushroom fish.mushroom fish's.mushroom fish.mushroom fish's
+иuцgчs.n.mass.s.poop
+wøoиzemnesgār.n.count.s.helicopter
+dvēmиrof.n.count.s.shotgun
+πψegoniq.n.count.s.desert
+emиrof.n.count.s.gun
+иrūgz.n.mass.ir.valuables.valuables'
+plūīr.n.count.s.tree
+plūw.n.mass.s.wood
+
+
