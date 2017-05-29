@@ -93,7 +93,7 @@ namespace TexteTranslator
             this.loadInput.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.loadInput.Size = new System.Drawing.Size(179, 20);
             this.loadInput.TabIndex = 4;
-            this.loadInput.Text = "Dictionary.txt";
+            this.loadInput.Text = "BasicDictionary.txt";
             // 
             // Form1
             // 
@@ -122,6 +122,8 @@ namespace TexteTranslator
         private System.Windows.Forms.TextBox input;
         private System.Windows.Forms.TextBox output;
         private System.Windows.Forms.Button goButton;
+        private System.Windows.Forms.Button loadButton;
+        private System.Windows.Forms.TextBox loadInput;
 
         private Dictionary<string, string> sampleWords = new Dictionary<string, string>() {
             { "plūīr", "tree" },
@@ -182,8 +184,6 @@ namespace TexteTranslator
             {
                 string[] inputWords = inputText.Split(' ');
 
-                //DYLAN
-
                 foreach (string inputWord in inputWords) //For each word
                 {
                     ArrayList possibleWords = getPossibleWords(inputWord, loadedWords);
@@ -196,35 +196,21 @@ namespace TexteTranslator
                         string suffixString;
                         getPrefixAndSuffixStrings(inputWord, possibleWord, out prefixString, out suffixString);
                         this.output.Text += " " + prefixString + ":" + possibleWord + ":" + suffixString;
+
+                        ArrayList output;
+                        string leftover = getEndings(suffixString, sampleEndingMap.Keys, out output);
+
+                        Debug.Write("Leftover: " + leftover + " Matched Endings: ");
+                        foreach (string ending in output)
+                        {
+                            Debug.Write(ending + " ");
+                        }
                     }
 
                     this.output.Text += " ]";
                 }
 
                 this.output.Text += "\r\n\r\n";
-
-                //HAZEL
-
-                foreach (string inputWord in inputWords)
-                {
-                    string word;
-
-                    extractWordAndSuffix(inputWord, loadedWords, sampleEndingMap, sampleCaseMap, out word);
-                    //check to see if the inputted string includes one of the sample words/endings.
-
-                    this.output.Text += word + " "; //Introduce the space back in.
-                }
-
-                /*
-                 * This algorithm is super recursive!
-                 * While (suffix != "")
-                 *     Extract a suffix and the remainder string
-                 *     Add the extracted suffix to the front of a return string
-                 * Check to see if the remainder string is a word, if it is, add it to the front of the return string
-                 * Return the return string.
-                 * 
-                 * (A prefix function is currently a WIP.) 
-                 */
             }
         }
 
@@ -278,57 +264,6 @@ namespace TexteTranslator
         }
 
         /**
-         * Takes an inputted text, a set of potential words, and a set of potential endings, and returns the found word plus the found ending.
-         * @param inText The string from which to derive the ending
-         * @param words Potential words for the string
-         * @param endingMap Potential endings for the string
-         * @param caseMap Used if the word isn't recognized but the case still is.
-         * @param[out] word The rest of the phrase (possibly translated) without the suffix
-         * @param[out] suffix The translated suffix. "" if no suffix was recognized.
-         */
-        void extractWordAndSuffix(string inText, DictionaryEntry[] words, Dictionary<string, int> endingMap, Dictionary<string, string> caseMap, out string word)
-        {
-            DictionaryEntry possibleWords = getWord(inText, words);
-
-            if (possibleWords != null) //A word without a suffix was matched.
-            {
-                word = possibleWords.getConjugation(0); //Default to the nominative case.
-                return; //There's no need to go further. The entire phrase was a translatable word.
-            }
-            
-            //If the return wasn't called, the input was a known word + a suffix, an unknown word + a suffix, or an unknown word.
-
-            string ending = getEnding(inText, endingMap.Keys); //Get the ending.
-
-            if (ending != "") //If an ending was matched...
-            {
-                string withoutEnding = inText.Substring(0, inText.Length - ending.Length);
-                //Sets withoutEnding equal to the part of the string w/o the suffix
-
-                possibleWords = getWord(withoutEnding, words); //See if the input, w/o the suffix, is a word.
-
-                int suffixNumber = endingMap[ending];
-
-                if (possibleWords != null) //If a word and a suffix was matched, return that word conjugated correctly.
-                {
-                    word = possibleWords.getConjugation(suffixNumber);
-                    return;
-                }
-                else //No word was matched, but a suffix was. 
-                     //[IN A RECURSIVE FUNCTION, THIS IS *THE ONLY* CASE WHICH SHOULD LOOP]
-                {
-                    word = withoutEnding + caseMap[ending];
-                    return;
-                }
-            }
-            
-            //If we get here, no ending was matched and the input is not just a word.
-            //So the only thing it can be is an unknown word.
-            word = inText; //Nothing could be translated :(
-            return;
-        }
-
-        /**
          * If the inputted word is one of those in the dictionary, returns the word. Else, returns the inputted word.
          * @param inText The word to check against the dictionary
          * @param words The dictionary of words (2D array)
@@ -365,26 +300,40 @@ namespace TexteTranslator
         }
 
         /**
-         * Returns the ending from the dictionary keys which ends the given string.
+         * Returns the endings from the dictionary keys which ends the given string.
          * @param inText The text from which to extract the ending.
          * @param endingMap The dictionary of ending and their maps.
-         * @returns The ending from the dictionary's keys which matched the inText ending, or "" if there was no match.
+         * @param[out] output The endings from the dictionary's keys which matched the inText ending, or "" if there was no match.
+         * @return If all the endings were matched, an empty string. Else, the bit which didn't work.
          */
-        string getEnding(string inText, KeyCollection endingList)
+        string getEndings(string inText, KeyCollection endingList, out ArrayList output)
         {
-            string outputString = ""; //This will only remain as "" if it is not reassigned later (ie: if no endings match)
+            ArrayList outputStrings = new ArrayList();
 
-            foreach (string ending in endingList) //loops through each possible textē ending in the endingList and compares it to the actual ending.
+            string text = inText;
+
+            bool matchedEnding = true;
+
+            while (text.Length > 0 && matchedEnding == true)
             {
-                if (compareEnding(inText, ending))
+                matchedEnding = false;
+                foreach (string ending in endingList) //loops through each possible textē ending in the endingList and compares it to the actual ending.
                 {
-                    outputString = ending;
-                    //sets outputString equal to the ending which was matched.
-                    break; //exits the foreach loop. If one ending matches, there's no point in checking all the others.
+                    if (compareEnding(text, ending))
+                    {
+                        outputStrings.Add(ending);
+                        text = text.Substring(0, text.Length - ending.Length); //Make text itself, minus the ending
+                                                                               //sets outputString equal to the ending which was matched.
+                        matchedEnding = true;
+                        break; //exits the foreach loop. If one ending matches, there's no point in checking all the others.
+                    }
                 }
+                //MatchedEnding will be false if no ending was matched (ie: the string's ending isn't a suffix)
             }
 
-            return outputString;
+            output =  outputStrings;
+
+            return text;
         }
 
         /**
@@ -395,6 +344,11 @@ namespace TexteTranslator
          */
         bool compareEnding(string inText, string toMatch)
         {
+            if (inText.Length - toMatch.Length < 0)
+            {
+                return false; //A string of length 2 cannot, by definition, be the end a string of length 1
+            }
+
             string[] toMatchLetters = toMatch.Split(); //toMatchLetters splits the ending string between every character
 
             string inTextEnding = inText.Substring(inText.Length - toMatch.Length, toMatch.Length); 
@@ -448,9 +402,6 @@ namespace TexteTranslator
                 Debug.WriteLine(inputArray[i].ToString());
             }
         }
-
-        private System.Windows.Forms.Button loadButton;
-        private System.Windows.Forms.TextBox loadInput;
     }
 }
 
