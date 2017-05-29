@@ -144,7 +144,15 @@ namespace TexteTranslator
             { "ol", 3 },
             { "ot", 4 }
         }; //providing "o" returns " + nominative", etc.
-        //   at a certain point, this will return english endings instead of phrases like "accusative".
+           //   at a certain point, this will return english endings instead of phrases like "accusative".
+
+        private Dictionary<string, int> sampleBeginningMap = new Dictionary<string, int>() {
+            { "agno", 0 },
+            { "egā", 1 },
+            { "āme", 2 },
+            { "o", 3 },
+            { "жo", 4 }
+        };
 
         private Dictionary<string, string> sampleCaseMap = new Dictionary<string, string>() {
             { "o", "+Nominative" },
@@ -154,7 +162,7 @@ namespace TexteTranslator
             { "ot", "+Locative" }
         }; //A case map which will be used if the ending is recognized but the word isn't.
 
-        /**
+        /*
          * Runs when the form loads or when the load button is clicked.
          */
         void loadDictionary()
@@ -171,7 +179,7 @@ namespace TexteTranslator
             input.Enabled = true;
         }
 
-        /**
+        /*
          * Called when goButton is clicked or enter is pressed on the form.
          */
         void buttonClick()
@@ -197,11 +205,26 @@ namespace TexteTranslator
                         getPrefixAndSuffixStrings(inputWord, possibleWord, out prefixString, out suffixString);
                         this.output.Text += " " + prefixString + ":" + possibleWord + ":" + suffixString;
 
-                        ArrayList output;
-                        string leftover = getEndings(suffixString, sampleEndingMap.Keys, out output);
+                        //Check prefixes
+                        ArrayList prefixOutput;
+                        string prefixLeftover = getEndings(true, prefixString, sampleBeginningMap.Keys, out prefixOutput);
 
-                        Debug.Write("Leftover: " + leftover + " Matched Endings: ");
-                        foreach (string ending in output)
+                        //Print prefixes
+                        Debug.WriteLine("");
+                        Debug.Write("Leftover: " + prefixLeftover + " Matched Beginnings: ");
+                        foreach (string beginning in prefixOutput)
+                        {
+                            Debug.Write(beginning + " ");
+                        }
+
+                        //Check suffixes
+                        ArrayList suffixOutput;
+                        string suffixLeftover = getEndings(false, suffixString, sampleEndingMap.Keys, out suffixOutput);
+
+                        //Print suffixes
+                        Debug.WriteLine("");
+                        Debug.Write("Leftover: " + suffixLeftover + " Matched Endings: ");
+                        foreach (string ending in suffixOutput)
                         {
                             Debug.Write(ending + " ");
                         }
@@ -214,7 +237,7 @@ namespace TexteTranslator
             }
         }
 
-        /**
+        /*
          * Takes a complete word and a possible base word, and returns two strings, removing the base word to get the two sides.
          * @param completeWord The word in its entirety
          * @param baseWord The word to be removed
@@ -229,7 +252,7 @@ namespace TexteTranslator
             suffixString = completeWord.Substring(baseLoc + baseWord.Length); //From the end of baseWord, until the end of the string
         }
 
-        /**
+        /*
          * Takes a string in textē and a set of words to match and returns any word matches in textē.
          * @param inText The text from which to extract words
          * @param words The words to potentially match
@@ -263,7 +286,7 @@ namespace TexteTranslator
             return matches;
         }
 
-        /**
+        /*
          * If the inputted word is one of those in the dictionary, returns the word. Else, returns the inputted word.
          * @param inText The word to check against the dictionary
          * @param words The dictionary of words (2D array)
@@ -282,7 +305,7 @@ namespace TexteTranslator
             return null;
         }
 
-        /**
+        /*
          * An overloaded version of getWord for dictionaries. OUT OF DATE
          */
         string getWord(string inText, Dictionary<string, string> words)
@@ -299,14 +322,15 @@ namespace TexteTranslator
             }
         }
 
-        /**
+        /*
          * Returns the endings from the dictionary keys which ends the given string.
+         * @param isPrefixes True for prefix checks, false for suffix checks
          * @param inText The text from which to extract the ending.
-         * @param endingMap The dictionary of ending and their maps.
+         * @param endingList A list of the dictionary of ending's keys.
          * @param[out] output The endings from the dictionary's keys which matched the inText ending, or "" if there was no match.
          * @return If all the endings were matched, an empty string. Else, the bit which didn't work.
          */
-        string getEndings(string inText, KeyCollection endingList, out ArrayList output)
+        string getEndings(bool isPrefixes, string inText, KeyCollection endingList, out ArrayList output)
         {
             ArrayList outputStrings = new ArrayList();
 
@@ -319,13 +343,21 @@ namespace TexteTranslator
                 matchedEnding = false;
                 foreach (string ending in endingList) //loops through each possible textē ending in the endingList and compares it to the actual ending.
                 {
-                    if (compareEnding(text, ending))
+                    if (compareEnding(isPrefixes, text, ending))
                     {
                         outputStrings.Add(ending);
-                        text = text.Substring(0, text.Length - ending.Length); //Make text itself, minus the ending
-                                                                               //sets outputString equal to the ending which was matched.
+
+                        if (isPrefixes)
+                        {
+                            text = text.Substring(ending.Length); //Make text itself, minus the beginning
+                        }
+                        else
+                        {
+                            text = text.Substring(0, text.Length - ending.Length); //Make text itself, minus the ending
+                        }
+
                         matchedEnding = true;
-                        break; //exits the foreach loop. If one ending matches, there's no point in checking all the others.
+                        break; //exits the foreach loop. If one ending matches at this position, there's no point in checking all the others.
                     }
                 }
                 //MatchedEnding will be false if no ending was matched (ie: the string's ending isn't a suffix)
@@ -336,13 +368,14 @@ namespace TexteTranslator
             return text;
         }
 
-        /**
+        /*
          * Compares if a given string is at the end of another given string
+         * @param isPrefixes True for prefix checks, false for suffix checks
          * @param inText The main string
          * @param toMatch The ending to compare
          * @return Whether or not the ending was at the end of the main string
          */
-        bool compareEnding(string inText, string toMatch)
+        bool compareEnding(bool isPrefixes, string inText, string toMatch)
         {
             if (inText.Length - toMatch.Length < 0)
             {
@@ -351,8 +384,18 @@ namespace TexteTranslator
 
             string[] toMatchLetters = toMatch.Split(); //toMatchLetters splits the ending string between every character
 
-            string inTextEnding = inText.Substring(inText.Length - toMatch.Length, toMatch.Length); 
-            //sets inTextEnding to the end of inText. inTextEnding is now the same length as toMatch
+            string inTextEnding;
+
+            if (isPrefixes)
+            {
+                inTextEnding = inText.Substring(0, toMatch.Length);
+                //sets inTextEnding to the START of inText. It is now the same length as toMatch
+            }
+            else
+            {
+                inTextEnding = inText.Substring(inText.Length - toMatch.Length, toMatch.Length);
+                //sets inTextEnding to the END of inText. inTextEnding is now the same length as toMatch
+            }
 
             string[] letters = inTextEnding.Split(); //letters splits the ending of the provided string between every character
 
@@ -373,7 +416,7 @@ namespace TexteTranslator
             return areSame;
         }
 
-        /**
+        /*
          * Reads from a file and formats it to an array.
          * @param filePath Where the file is stored. Should start "C:\\", etc.
          */
@@ -392,7 +435,7 @@ namespace TexteTranslator
             }
         }
 
-        /**
+        /*
          * Prints the given 2D array to the console.
          */
         void print2DArray(DictionaryEntry[] inputArray)
