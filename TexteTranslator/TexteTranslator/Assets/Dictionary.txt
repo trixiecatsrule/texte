@@ -67,7 +67,7 @@ tøwī.adj.stupid
 πлoи.adj.lone
 
 яāwłāиz.v3.i.emerge.emerges.emerged.emerged.emerging.disappear.disappears.disappeared.disappeared.disappearing.reappear.reappears.reappeared.reappeared.reappearing
-āmaи..v1.t.shoot.shoots.shot.shot.shooting
+āmaи.v1.t.shoot.shoots.shot.shot.shooting
 rгem.v2.t.curse.curses.cursed.cursed.cursing.exorcise.exorcises.exorcised.exorcised.exorcising
 exānmeīи.v1.t.cuddle.cuddles.cuddled.cuddled.cuddling
 dчи.v2.dt/t.do.does.did.done.doing.undo.undoes.undid.undone.undoing

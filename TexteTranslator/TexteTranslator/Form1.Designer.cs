@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Collections.Generic.Dictionary<string, int>;
@@ -93,7 +94,7 @@ namespace TexteTranslator
             this.loadInput.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.loadInput.Size = new System.Drawing.Size(179, 20);
             this.loadInput.TabIndex = 4;
-            this.loadInput.Text = "BasicDictionary.txt";
+            this.loadInput.Text = "Dictionary.txt";
             // 
             // Form1
             // 
@@ -135,7 +136,7 @@ namespace TexteTranslator
             { "plī", "big" }
         }; //some sample words to play with
 
-        private DictionaryEntry[] loadedWords;
+        private ArrayList loadedWords;
 
         private Dictionary<string, int> sampleEndingMap = new Dictionary<string, int>() {
             { "o", 0 },
@@ -172,7 +173,7 @@ namespace TexteTranslator
 
             //readFile("C:\\Users\\Hazel\\Downloads\\Texte\\TexteTranslator\\TexteTranslator\\Assets\\Dictionary.txt");
             readFile("..\\..\\Assets\\" + this.loadInput.Text);
-            print2DArray(loadedWords);
+            printDictionary(loadedWords);
 
             //Only after the dictionary has loaded do we allow inputs.
             input.ReadOnly = false;
@@ -232,8 +233,6 @@ namespace TexteTranslator
 
                     this.output.Text += " ]";
                 }
-
-                this.output.Text += "\r\n\r\n";
             }
         }
 
@@ -258,7 +257,7 @@ namespace TexteTranslator
          * @param words The words to potentially match
          * @return A list of the words which were matched
          */
-        ArrayList getPossibleWords(string inText, DictionaryEntry[] dictionary)
+        ArrayList getPossibleWords(string inText, ArrayList dictionary)
         {
             ArrayList matches = new ArrayList();
 
@@ -270,9 +269,9 @@ namespace TexteTranslator
 
                 for (int n = 0; n < repeat; n++)
                 {
-                    for (int j = 0; j < dictionary.Length; j++)
+                    foreach (DictionaryEntry curr in dictionary)
                     {
-                        string vocabWord = dictionary[j].getBase();
+                        string vocabWord = curr.getBase();
                         if (checkString == vocabWord)
                         {
                             matches.Add(vocabWord);
@@ -424,25 +423,34 @@ namespace TexteTranslator
         {
             string[] lines = System.IO.File.ReadAllLines(@filePath); //reads the file into an array which now contains each line
 
-            loadedWords = new DictionaryEntry[lines.Length]; //Initializes loadedWords with the right number of lines
+            loadedWords = new ArrayList(); //Initializes loadedWords with the right number of lines
+
+            int blankLines = 0;
 
             for (int i = 0; i < lines.Length; i++) //For every line...
             {
-                //Initializes the array with as many rows as needed and 7 columns: the textē word, part of speech, and five cases
                 string line = lines[i];
                 string[] segments = line.Split('.');
-                loadedWords[i] = new DictionaryEntry(segments);
+
+                if (segments.Length > 1) //It's not a blank line
+                {
+                    loadedWords.Add(new DictionaryEntry(segments));
+                }
+                else
+                {
+                    blankLines++;
+                }
             }
         }
 
         /*
-         * Prints the given 2D array to the console.
+         * Prints the given dictionary to the console.
          */
-        void print2DArray(DictionaryEntry[] inputArray)
+        void printDictionary(ArrayList inputDictionary)
         {
-            for (int i = 0; i < inputArray.Length; i++) //For every row
+            foreach (DictionaryEntry curr in inputDictionary)
             {
-                Debug.WriteLine(inputArray[i].ToString());
+                Debug.WriteLine(curr.ToString());
             }
         }
     }
