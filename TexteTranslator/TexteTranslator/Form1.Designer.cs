@@ -204,18 +204,17 @@ namespace TexteTranslator
                         string prefixString;
                         string suffixString;
                         getPrefixAndSuffixStrings(inputWord, possibleWord, out prefixString, out suffixString);
-                        this.output.Text += " " + prefixString + ":" + possibleWord + ":" + suffixString;
 
                         //Check prefixes
                         ArrayList prefixOutput;
                         string prefixLeftover = getEndings(true, prefixString, sampleBeginningMap.Keys, out prefixOutput);
 
                         //Print prefixes
-                        Debug.WriteLine("");
-                        Debug.Write("Leftover: " + prefixLeftover + " Matched Beginnings: ");
+                        string prefixOut = "";
+                        prefixOut += "(" + prefixLeftover + ")";
                         foreach (string beginning in prefixOutput)
                         {
-                            Debug.Write(beginning + " ");
+                            prefixOut += beginning + ":";
                         }
 
                         //Check suffixes
@@ -223,12 +222,14 @@ namespace TexteTranslator
                         string suffixLeftover = getEndings(false, suffixString, sampleEndingMap.Keys, out suffixOutput);
 
                         //Print suffixes
-                        Debug.WriteLine("");
-                        Debug.Write("Leftover: " + suffixLeftover + " Matched Endings: ");
+                        string suffixOut = "";
                         foreach (string ending in suffixOutput)
                         {
-                            Debug.Write(ending + " ");
+                            suffixOut += ":" + ending;
                         }
+                        suffixOut += "(" + suffixLeftover + ")";
+
+                        this.output.Text += " " + prefixOut + ":" + possibleWord + ":" + suffixOut;
                     }
 
                     this.output.Text += " ]";
