@@ -45,23 +45,24 @@ namespace TexteTranslator
             // 
             this.input.Enabled = false;
             this.input.Font = new System.Drawing.Font("Arial", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.input.Location = new System.Drawing.Point(12, 12);
+            this.input.Location = new System.Drawing.Point(18, 18);
+            this.input.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.input.Multiline = true;
             this.input.Name = "input";
             this.input.ReadOnly = true;
-            this.input.Size = new System.Drawing.Size(260, 95);
+            this.input.Size = new System.Drawing.Size(388, 144);
             this.input.TabIndex = 0;
-            this.input.UseWaitCursor = true;
             // 
             // output
             // 
             this.output.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.output.Enabled = false;
             this.output.Font = new System.Drawing.Font("Arial", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output.Location = new System.Drawing.Point(12, 142);
+            this.output.Location = new System.Drawing.Point(18, 218);
+            this.output.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.output.Multiline = true;
             this.output.Name = "output";
-            this.output.Size = new System.Drawing.Size(260, 107);
+            this.output.Size = new System.Drawing.Size(390, 165);
             this.output.TabIndex = 1;
             // 
             // goButton
@@ -69,9 +70,10 @@ namespace TexteTranslator
             this.goButton.BackColor = System.Drawing.Color.DodgerBlue;
             this.goButton.Font = new System.Drawing.Font("Arial", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.goButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.goButton.Location = new System.Drawing.Point(105, 113);
+            this.goButton.Location = new System.Drawing.Point(158, 174);
+            this.goButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.goButton.Name = "goButton";
-            this.goButton.Size = new System.Drawing.Size(75, 23);
+            this.goButton.Size = new System.Drawing.Size(112, 35);
             this.goButton.TabIndex = 2;
             this.goButton.Text = "Translate";
             this.goButton.UseVisualStyleBackColor = false;
@@ -79,9 +81,10 @@ namespace TexteTranslator
             // 
             // loadButton
             // 
-            this.loadButton.Location = new System.Drawing.Point(197, 258);
+            this.loadButton.Location = new System.Drawing.Point(296, 397);
+            this.loadButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.loadButton.Name = "loadButton";
-            this.loadButton.Size = new System.Drawing.Size(75, 20);
+            this.loadButton.Size = new System.Drawing.Size(112, 31);
             this.loadButton.TabIndex = 3;
             this.loadButton.Text = "Load";
             this.loadButton.UseVisualStyleBackColor = true;
@@ -89,25 +92,27 @@ namespace TexteTranslator
             // 
             // loadInput
             // 
-            this.loadInput.Location = new System.Drawing.Point(12, 258);
+            this.loadInput.Location = new System.Drawing.Point(18, 397);
+            this.loadInput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.loadInput.Name = "loadInput";
             this.loadInput.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.loadInput.Size = new System.Drawing.Size(179, 20);
+            this.loadInput.Size = new System.Drawing.Size(266, 26);
             this.loadInput.TabIndex = 4;
             this.loadInput.Text = "Dictionary.txt";
             // 
             // Form1
             // 
             this.AcceptButton = this.goButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(284, 294);
+            this.ClientSize = new System.Drawing.Size(426, 452);
             this.Controls.Add(this.loadInput);
             this.Controls.Add(this.loadButton);
             this.Controls.Add(this.goButton);
             this.Controls.Add(this.output);
             this.Controls.Add(this.input);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
